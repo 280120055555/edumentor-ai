@@ -12,7 +12,6 @@ import { useLanguage } from "@/lib/language-context"
 
 const GROQ_API_KEY = process.env.NEXT_PUBLIC_GROQ_API_KEY;
 
-// ─── Типы для Web Speech API ───────────────────────────────────────────────
 declare global {
   interface Window {
     SpeechRecognition: any
@@ -27,11 +26,16 @@ interface Message {
   timestamp: string
 }
 
-// Маппинг языка приложения → код для распознавания речи
 const SPEECH_LANG_MAP: Record<string, string> = {
   ru: "ru-RU",
   kz: "kk-KZ",
   en: "en-US",
+}
+
+const PREFERRED_VOICES: Record<string, string[]> = {
+  ru: ["Microsoft Pavel - Russian (Russia)", "Pavel", "Yuri", "Юрий"],
+  kz: ["Microsoft Pavel - Russian (Russia)", "Pavel"],
+  en: ["Microsoft Mark - English (United States)", "Mark", "Google US English Male", "Alex"],
 }
 
 export function AIMentorScreen() {
@@ -41,14 +45,12 @@ export function AIMentorScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const [userName, setUserName] = useState("Студент")
 
-  // ─── Голосовой режим ──────────────────────────────────────────────────────
-  const [isListening, setIsListening] = useState(false)       // микрофон активен?
-  const [isSpeaking, setIsSpeaking] = useState(false)         // AI сейчас говорит?
-  const [voiceEnabled, setVoiceEnabled] = useState(true)      // автоозвучка ответов
-  const [voiceSupported, setVoiceSupported] = useState(false) // браузер поддерживает?
+  const [isListening, setIsListening] = useState(false)
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
+  const [voiceSupported, setVoiceSupported] = useState(false)
   const recognitionRef = useRef<any>(null)
 
-  // Проверяем поддержку браузером при монтировании
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     if (SpeechRecognition) {
@@ -59,14 +61,12 @@ export function AIMentorScreen() {
     }
   }, [])
 
-  // При смене языка обновляем язык распознавания
   useEffect(() => {
     if (recognitionRef.current) {
       recognitionRef.current.lang = SPEECH_LANG_MAP[language] || "ru-RU"
     }
   }, [language])
 
-  // Начать/остановить запись голоса
   const toggleListening = () => {
     if (!voiceSupported || !recognitionRef.current) return
 
@@ -76,23 +76,18 @@ export function AIMentorScreen() {
       return
     }
 
-    // Останавливаем озвучку если AI говорит
     if (isSpeaking) {
       window.speechSynthesis.cancel()
       setIsSpeaking(false)
     }
 
     recognitionRef.current.lang = SPEECH_LANG_MAP[language] || "ru-RU"
-
     recognitionRef.current.onstart = () => setIsListening(true)
-
     recognitionRef.current.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript
       setInputValue(transcript)
-      // Автоматически отправляем после распознавания
       setTimeout(() => handleSend(transcript), 300)
     }
-
     recognitionRef.current.onerror = () => setIsListening(false)
     recognitionRef.current.onend = () => setIsListening(false)
 
@@ -103,23 +98,48 @@ export function AIMentorScreen() {
     }
   }
 
-  // Озвучить текст через синтез речи
-  const speakText = (text: string) => {
+  // ─── Ждём пока браузер загрузит все голоса ───────────────────────────────
+  const getVoicesAsync = (): Promise<SpeechSynthesisVoice[]> => {
+    return new Promise((resolve) => {
+      const voices = window.speechSynthesis.getVoices()
+      if (voices.length > 0) {
+        resolve(voices)
+        return
+      }
+      window.speechSynthesis.onvoiceschanged = () => {
+        resolve(window.speechSynthesis.getVoices())
+      }
+    })
+  }
+
+  // ─── Pavel для RU/KZ, Mark для EN ────────────────────────────────────────
+  const speakText = async (text: string) => {
     if (!voiceEnabled || !window.speechSynthesis) return
 
-    // Убираем markdown разметку перед озвучкой
     const cleanText = text
       .replace(/\*\*(.*?)\*\*/g, "$1")
       .replace(/\*(.*?)\*/g, "$1")
       .replace(/#{1,6}\s/g, "")
       .replace(/`(.*?)`/g, "$1")
-      .slice(0, 500) // Ограничиваем длину для быстрого ответа
+      .slice(0, 500)
 
     window.speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(cleanText)
     utterance.lang = SPEECH_LANG_MAP[language] || "ru-RU"
-    utterance.rate = 0.95
-    utterance.pitch = 1.0
+
+    const allVoices = await getVoicesAsync()
+    const preferredNames = PREFERRED_VOICES[language] || PREFERRED_VOICES["ru"]
+
+    const selectedVoice =
+      allVoices.find(v => preferredNames.some(name => v.name === name)) ||
+      allVoices.find(v => preferredNames.some(name => v.name.includes(name))) ||
+      allVoices.find(v => v.lang === utterance.lang) ||
+      null
+
+    if (selectedVoice) utterance.voice = selectedVoice
+
+    utterance.rate = 1.1
+    utterance.pitch = 0.9
 
     utterance.onstart = () => setIsSpeaking(true)
     utterance.onend = () => setIsSpeaking(false)
@@ -128,13 +148,11 @@ export function AIMentorScreen() {
     window.speechSynthesis.speak(utterance)
   }
 
-  // Остановить озвучку
   const stopSpeaking = () => {
     window.speechSynthesis.cancel()
     setIsSpeaking(false)
   }
 
-  // ─── Остальная логика (без изменений) ────────────────────────────────────
   const initialSuggestions = [
     t("aiMentor.sug1"),
     t("aiMentor.sug2"),
@@ -252,8 +270,7 @@ export function AIMentorScreen() {
       setMessages(prev => [...prev, aiMsg])
       if (newSuggestions.length > 0) setSuggestions(newSuggestions)
 
-      // 🔊 Озвучиваем ответ AI если включена автоозвучка
-      speakText(botAnswer)
+      await speakText(botAnswer)
 
     } catch (error: any) {
       console.error("Пойманная ошибка:", error)
@@ -274,6 +291,7 @@ export function AIMentorScreen() {
 
   return (
     <div className="flex flex-col h-full w-full max-w-5xl mx-auto gap-4 overflow-hidden">
+
       {/* Заголовок */}
       <div className="shrink-0 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -288,10 +306,9 @@ export function AIMentorScreen() {
           </div>
         </div>
 
-        {/* 🎤 Панель управления голосом */}
+        {/* Панель управления голосом */}
         {voiceSupported && (
           <div className="flex items-center gap-2">
-            {/* Кнопка вкл/выкл автоозвучки */}
             <Button
               variant="ghost"
               size="icon"
@@ -305,7 +322,6 @@ export function AIMentorScreen() {
               {voiceEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
             </Button>
 
-            {/* Кнопка остановки озвучки */}
             {isSpeaking && (
               <Button
                 variant="ghost"
@@ -321,6 +337,7 @@ export function AIMentorScreen() {
       </div>
 
       <div className="flex flex-1 gap-6 min-h-0">
+
         {/* Главное окно чата */}
         <Card className="flex flex-1 flex-col h-full border-border/60 bg-card shadow-lg overflow-hidden rounded-2xl">
           <ScrollArea className="flex-1 min-h-0 p-4" ref={scrollRef}>
@@ -340,7 +357,6 @@ export function AIMentorScreen() {
                       <span className="text-[9px] font-medium opacity-60 uppercase tracking-tighter">
                         {msg.timestamp}
                       </span>
-                      {/* Кнопка переслушать конкретное сообщение */}
                       {msg.role === "assistant" && voiceSupported && (
                         <button
                           onClick={() => speakText(msg.content)}
@@ -378,7 +394,7 @@ export function AIMentorScreen() {
             ))}
           </div>
 
-          {/* Поле ввода + кнопка микрофона */}
+          {/* Поле ввода */}
           <div className="shrink-0 p-4 border-t border-border/50 bg-background">
             <div className="flex items-center gap-2">
               <Input
@@ -396,7 +412,6 @@ export function AIMentorScreen() {
                 disabled={isLoading}
               />
 
-              {/* 🎤 Кнопка микрофона */}
               {voiceSupported && (
                 <Button
                   onClick={toggleListening}
@@ -422,7 +437,6 @@ export function AIMentorScreen() {
               </Button>
             </div>
 
-            {/* Подсказка про голос (только если поддерживается) */}
             {voiceSupported && (
               <p className="text-[10px] text-muted-foreground/50 mt-2 text-center">
                 {isListening
@@ -463,7 +477,7 @@ export function AIMentorScreen() {
                 </div>
               </div>
 
-              {/* 🎤 Статус голосового режима в боковой панели */}
+              {/* Статус голосового режима */}
               {voiceSupported && (
                 <div className="pt-4 border-t border-dashed border-border/50 space-y-3">
                   <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
@@ -483,10 +497,12 @@ export function AIMentorScreen() {
                     </button>
                   </div>
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground">Язык речи</span>
-                    <span className="text-primary font-bold">
-                      {SPEECH_LANG_MAP[language] || "ru-RU"}
-                    </span>
+                    <span className="text-muted-foreground">Голос (RU)</span>
+                    <span className="text-primary font-bold">Pavel</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-muted-foreground">Голос (EN)</span>
+                    <span className="text-primary font-bold">Mark</span>
                   </div>
                   {isSpeaking && (
                     <div className="flex items-center gap-2 text-[11px] text-amber-500">
@@ -511,6 +527,7 @@ export function AIMentorScreen() {
             </div>
           </ScrollArea>
         </Card>
+
       </div>
     </div>
   )
