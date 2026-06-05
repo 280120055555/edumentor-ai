@@ -10,19 +10,18 @@ const withPWA = withPWAInit({
     workboxOptions: {
         expiration: {
             maxEntries: 64,
-            maxAgeSeconds: 30 * 24 * 60 * 60, // 1 месяц кэша
+            maxAgeSeconds: 30 * 24 * 60 * 60,
         },
     },
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    turbopack: {},
     typescript: {
-        // Сохраняем твою настройку игнорирования ошибок
         ignoreBuildErrors: true,
     },
     images: {
-        // Сохраняем твою настройку картинок
         unoptimized: true,
     },
 };
