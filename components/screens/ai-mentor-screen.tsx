@@ -229,8 +229,8 @@ export function AIMentorScreen() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          response_format: { type: "json_object" },
+        model: "llama-3.3-70b-versatile",
+        max_tokens: 1024,
           messages: [
             { role: "system", content: systemPrompt },
             ...chatHistory,
