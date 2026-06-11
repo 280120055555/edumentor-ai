@@ -1,18 +1,19 @@
 {
     "name": "EduMentor AI",
     "short_name": "EduMentor",
-    "description": "AI академический помощник студента",
+    "description": "Академический ментор для студентов Satbayev University",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#3b82f6",
+    "theme_color": "#6366f1",
+    "orientation": "portrait",
     "icons": [{
-            "src": "/icon-192x192.png",
+            "src": "/icon-192x192.png.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/icon-512x512.png",
+            "src": "/icon-512x512.png.png",
             "sizes": "512x512",
             "type": "image/png"
         }

@@ -13,6 +13,7 @@ const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 export const metadata: Metadata = {
   title: 'EduMentor AI - Академический помощник студента',
   description: 'Интеллектуальная AI платформа для студентов',
+  manifest: '/manifest.json',
 }
 
 export const viewport: Viewport = {
