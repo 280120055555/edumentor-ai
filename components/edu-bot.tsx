@@ -104,57 +104,84 @@ export function EduBot({ language = "ru", userName = "Студент", gpa, weak
         <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[10px] border-l-transparent border-r-transparent border-t-white" />
       </div>
 
-      {/* Персонаж */}
-      <div style={{ animation: "edubot-float 3s ease-in-out infinite" }}>
+      {/* Персонаж (Жаңартылған заманауи дизайн) */}
+      <div className="relative flex justify-center items-center my-2">
         <style>{`
-          @keyframes edubot-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-          @keyframes edubot-wave  { 0%,100%{transform:rotate(0deg)} 30%{transform:rotate(24deg)} 70%{transform:rotate(-8deg)} }
-          @keyframes edubot-blink { 0%,85%,100%{transform:scaleY(1)} 90%{transform:scaleY(0.08)} }
-          .eb-arm { transform-origin:92px 88px; animation:edubot-wave 1.8s ease-in-out infinite; }
-          .eb-eyeL { transform-origin:48px 50px; animation:edubot-blink 4.2s ease-in-out infinite; }
-          .eb-eyeR { transform-origin:72px 50px; animation:edubot-blink 4.2s ease-in-out infinite 0.3s; }
+          @keyframes edubot-float { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+          @keyframes edubot-wave  { 0%,100%{transform:rotate(0deg)} 30%{transform:rotate(25deg)} 70%{transform:rotate(-10deg)} }
+          @keyframes edubot-blink { 0%,85%,100%{transform:scaleY(1)} 90%{transform:scaleY(0.1)} }
+          .eb-body { animation: edubot-float 3.5s ease-in-out infinite; }
+          .eb-arm { transform-origin: 90px 75px; animation: edubot-wave 2s ease-in-out infinite; }
+          .eb-eyeL { transform-origin: 46px 56px; animation: edubot-blink 4s ease-in-out infinite; }
+          .eb-eyeR { transform-origin: 74px 56px; animation: edubot-blink 4s ease-in-out infinite 0.2s; }
         `}</style>
-        <svg width="100" height="125" viewBox="0 0 120 140">
-          {/* Тело */}
-          <ellipse cx="60" cy="96" rx="28" ry="32" fill="#1d4ed8"/>
-          <ellipse cx="60" cy="69" rx="22" ry="8" fill="#1e40af"/>
-          {/* Голова */}
-          <circle cx="60" cy="50" r="28" fill="#fde68a"/>
-          {/* Шапка */}
-          <rect x="34" y="26" width="52" height="7" rx="3" fill="#1e293b"/>
-          <rect x="44" y="14" width="32" height="14" rx="3" fill="#1e293b"/>
-          <rect x="72" y="12" width="3" height="8" fill="#1e293b"/>
-          <circle cx="73" cy="11" r="4" fill="#ef4444"/>
-          {/* Глаза */}
-          <ellipse className="eb-eyeL" cx="48" cy="50" rx="5" ry="6" fill="white"/>
-          <ellipse className="eb-eyeR" cx="72" cy="50" rx="5" ry="6" fill="white"/>
-          <circle cx="49" cy="51" r="3" fill="#1e293b"/>
-          <circle cx="73" cy="51" r="3" fill="#1e293b"/>
-          <circle cx="50" cy="50" r="1" fill="white"/>
-          <circle cx="74" cy="50" r="1" fill="white"/>
-          {/* Нос */}
-          <ellipse cx="60" cy="57" rx="3" ry="2" fill="#f59e0b"/>
-          {/* Рот */}
-          <path d={mouth} stroke="#92400e" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-          {/* Румянец */}
-          <ellipse cx="44" cy="63" rx="6" ry="4" fill="#fca5a5" opacity="0.5"/>
-          <ellipse cx="76" cy="63" rx="6" ry="4" fill="#fca5a5" opacity="0.5"/>
-          {/* Руки */}
-          <ellipse cx="28" cy="91" rx="9" ry="18" fill="#1d4ed8" transform="rotate(-15 28 91)"/>
-          <ellipse className="eb-arm" cx="92" cy="89" rx="9" ry="18" fill="#1d4ed8" transform="rotate(15 92 89)"/>
-          {/* Кисти */}
-          <circle cx="22" cy="104" r="8" fill="#fde68a"/>
-          <circle cx="98" cy="101" r="8" fill="#fde68a"/>
-          {/* Книга */}
-          <rect x="10" y="96" width="18" height="22" rx="2" fill="#ef4444"/>
-          <rect x="11" y="97" width="8" height="20" rx="1" fill="#fca5a5" opacity="0.35"/>
-          <line x1="10" y1="107" x2="28" y2="107" stroke="white" strokeWidth="0.8" opacity="0.5"/>
-          <line x1="10" y1="112" x2="28" y2="112" stroke="white" strokeWidth="0.8" opacity="0.5"/>
-          {/* Ноги */}
-          <rect x="44" y="123" width="14" height="13" rx="5" fill="#1e293b"/>
-          <rect x="62" y="123" width="14" height="13" rx="5" fill="#1e293b"/>
+        
+        {/* Артқы голографиялық жарық (Glow effect) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-violet-500/20 dark:bg-violet-500/30 blur-2xl rounded-full" />
+
+        <svg width="110" height="130" viewBox="0 0 120 140" className="eb-body z-10 relative">
+          {/* Астындағы көлеңкесі */}
+          <ellipse cx="60" cy="130" rx="22" ry="5" fill="currentColor" className="text-slate-200 dark:text-slate-800" />
+
+          {/* Негізгі денесі (Төменгі бөлігі) */}
+          <path d="M 40 85 C 40 110, 80 110, 80 85 Z" fill="url(#bodyGrad)" />
+          <rect x="42" y="75" width="36" height="20" rx="6" fill="url(#bodyGrad)" />
+
+          {/* Оң қол (Қозғалмайтын) */}
+          <g>
+            <path d="M 38 80 Q 25 85 22 100" fill="none" stroke="#8b5cf6" strokeWidth="5" strokeLinecap="round" />
+            <circle cx="22" cy="100" r="4.5" fill="#c4b5fd" />
+          </g>
+
+          {/* Сол қол (Бұлғаңдайтын) */}
+          <g className="eb-arm">
+            <path d="M 82 80 Q 95 70 100 55" fill="none" stroke="#8b5cf6" strokeWidth="5" strokeLinecap="round" />
+            <circle cx="100" cy="55" r="4.5" fill="#c4b5fd" />
+          </g>
+
+          {/* Басы (Ақ/қара корпус) */}
+          <rect x="25" y="35" width="70" height="48" rx="18" fill="#ffffff" className="dark:fill-slate-800" stroke="#8b5cf6" strokeWidth="2" />
+          
+          {/* Басындағы экран (Қара түсті) */}
+          <rect x="31" y="41" width="58" height="36" rx="12" fill="#0f172a" />
+
+          {/* Көздері (Неон түсті көк) */}
+          <g className="eb-eyeL">
+            <rect x="40" y="49" width="12" height="14" rx="5" fill="#2dd4bf" />
+            <circle cx="43" cy="53" r="2.5" fill="#ccfbf1" />
+          </g>
+          <g className="eb-eyeR">
+            <rect x="68" y="49" width="12" height="14" rx="5" fill="#2dd4bf" />
+            <circle cx="71" cy="53" r="2.5" fill="#ccfbf1" />
+          </g>
+
+          {/* Сөйлеп тұрғандағы ауыз анимациясы (Аудио толқын) */}
+          {mouthOpen ? (
+            <g className="animate-pulse">
+              <rect x="52" y="66" width="16" height="3" rx="1.5" fill="#2dd4bf" />
+              <rect x="55" y="62" width="10" height="3" rx="1.5" fill="#2dd4bf" />
+              <rect x="55" y="70" width="10" height="3" rx="1.5" fill="#2dd4bf" />
+            </g>
+          ) : (
+            <rect x="56" y="67" width="8" height="2.5" rx="1" fill="#2dd4bf" opacity="0.6" />
+          )}
+
+          {/* Академиялық қалпақ (Graduation Cap) */}
+          <path d="M 20 25 L 60 12 L 100 25 L 60 38 Z" fill="#6d28d9" />
+          <rect x="46" y="32" width="28" height="8" fill="#5b21b6" />
+          {/* Қалпақтың шашағы (Алтын түсті) */}
+          <path d="M 60 25 Q 85 28 90 42" fill="none" stroke="#f59e0b" strokeWidth="2" />
+          <circle cx="90" cy="44" r="3.5" fill="#f59e0b" />
+
+          {/* Денесіне арналған градиент бояу */}
+          <defs>
+            <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#a78bfa" />
+              <stop offset="100%" stopColor="#6d28d9" />
+            </linearGradient>
+          </defs>
         </svg>
-      </div>
+      </div>  
 
       {/* Кнопки */}
       <div className="grid grid-cols-2 gap-1.5 w-full">
