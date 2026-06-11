@@ -78,7 +78,7 @@ export function AppSidebar({ collapsed }: { collapsed: boolean }) {
     { label: t("nav.materials"), icon: FolderOpen, screen: "materials" },
     { label: t("nav.profile"), icon: User, screen: "profile" },
     { label: t("nav.settings"), icon: Settings, screen: "settings" },
-    { label: "Карта кампуса", icon: MapPin, screen: "campus-map" },
+    { label: t("nav.campusMap"), icon: MapPin, screen: "campus-map" },
   ]
 
   const handleLogout = async () => {

@@ -14,7 +14,8 @@
         "materials": "Материалы",
         "profile": "Профиль",
         "settings": "Настройки",
-        "logout": "Выйти"
+        "logout": "Выйти",
+        "campusMap": "Карта кампуса"
     },
     "common": {
         "loading": "Загрузка...",

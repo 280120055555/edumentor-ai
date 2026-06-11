@@ -14,7 +14,8 @@
         "materials": "Материалдар",
         "profile": "Профиль",
         "settings": "Баптаулар",
-        "logout": "Шығу"
+        "logout": "Шығу",
+        "campusMap": "Кампус картасы"
     },
     "common": {
         "loading": "Жүктелуде...",

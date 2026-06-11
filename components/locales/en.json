@@ -14,7 +14,8 @@
         "materials": "Materials",
         "profile": "Profile",
         "settings": "Settings",
-        "logout": "Log out"
+        "logout": "Log out",
+        "campusMap": "Campus Map"
     },
     "common": {
         "loading": "Loading...",
