@@ -8,16 +8,23 @@ const withPWA = withPWAInit({
     swMinify: true,
     disable: process.env.NODE_ENV === "development",
     workboxOptions: {
-        expiration: {
-            maxEntries: 64,
-            maxAgeSeconds: 30 * 24 * 60 * 60,
-        },
+        runtimeCaching: [{
+            urlPattern: /^https?.*/,
+            handler: "NetworkFirst",
+            options: {
+                cacheName: "offlineCache",
+                expiration: {
+                    maxEntries: 64,
+                    maxAgeSeconds: 30 * 24 * 60 * 60,
+                },
+            },
+        }, ],
     },
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    turbopack: {},
+    // turbopack убран — конфликтует с next-pwa
     typescript: {
         ignoreBuildErrors: true,
     },

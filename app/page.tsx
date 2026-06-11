@@ -27,6 +27,7 @@ import { NotificationsScreen } from "@/components/screens/notifications-screen"
 import { MaterialsScreen } from "@/components/screens/materials-screen"
 import { ProfileScreen } from "@/components/screens/profile-screen"
 import { SettingsScreen } from "@/components/screens/settings-screen"
+import { CampusMapScreen } from "@/components/screens/campus-map-screen"
 
 function AppContent() {
   const { currentScreen, isLoggedIn, setScreen, setIsLoggedIn } = useNavigation()
@@ -96,6 +97,7 @@ function AppContent() {
       case "materials": return <MaterialsScreen />
       case "profile": return <ProfileScreen />
       case "settings": return <SettingsScreen />
+      case "campus-map": return <CampusMapScreen />
       default: return <DashboardScreen />
     }
   }
@@ -117,6 +119,7 @@ function AppContent() {
       "materials": t("nav.materials"),
       "profile": t("nav.profile"),
       "settings": t("nav.settings"),
+      "campus-map": t("nav.campusMap"),
     }
     return titles[screen] || t("nav.dashboard")
   }

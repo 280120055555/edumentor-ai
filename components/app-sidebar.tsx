@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { auth, db } from "@/lib/firebase"
 import { doc, onSnapshot } from "firebase/firestore" // Используем onSnapshot для автообновления
 import { signOut } from "firebase/auth"
+import { MapPin } from "lucide-react"
 
 export function AppSidebar({ collapsed }: { collapsed: boolean }) {
   const { currentScreen, setScreen, setIsLoggedIn } = useNavigation()
@@ -77,6 +78,7 @@ export function AppSidebar({ collapsed }: { collapsed: boolean }) {
     { label: t("nav.materials"), icon: FolderOpen, screen: "materials" },
     { label: t("nav.profile"), icon: User, screen: "profile" },
     { label: t("nav.settings"), icon: Settings, screen: "settings" },
+    { label: "Карта кампуса", icon: MapPin, screen: "campus-map" },
   ]
 
   const handleLogout = async () => {

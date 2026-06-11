@@ -18,6 +18,7 @@ export type Screen =
   | "materials"
   | "profile"
   | "settings"
+  | "campus-map"
 
 interface NavigationContextType {
   currentScreen: Screen
